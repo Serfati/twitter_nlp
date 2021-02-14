@@ -14,7 +14,25 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau,TensorBo
 
 # Importing the dataset
 DATASET_ENCODING = "ISO-8859-1"
-dataset = pd.read_csv('assets/Train.csv',encoding=DATASET_ENCODING)
+raw_dataset = pd.read_csv('assets/twitter_nlp/training.1600000.processed.noemoticon.csv',encoding=DATASET_ENCODING)
+
+dataset = pd.DataFrame(columns=["Sentiment", "SentimentText"])
+dataset = dataset.fillna(0)
+
+negative = 0
+positive = 0
+for index, row in raw_dataset.iterrows():
+    if negative < 50000 and row[0] == 0:
+        dataset["Sentiment"] = row[0]
+        dataset["SentimentText"] = row[5]
+        negative+=1
+    elif positive < 50000 and row[0] == 4:
+        dataset["Sentiment"] = row[0]
+        dataset["SentimentText"] = row[5]
+        positive+=1
+    elif positive == 50000 and negative == 50000:
+        break
+
 
 # Reading contractions.csv and storing it as a dict.
 contractions = pd.read_csv('assets/contractions.csv', index_col='Contraction')
